@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Atrapa el electrón | Química</title>
+<style>
+:root{--ink:#172554;--muted:#52607a;--card:#ffffffee;--accent:#6d5dfc;--accent2:#22c55e;--bad:#ef476f;--gold:#f5b942}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:var(--ink);background:radial-gradient(circle at 10% 10%,#c4b5fd 0,transparent 28%),radial-gradient(circle at 90% 20%,#93c5fd 0,transparent 28%),linear-gradient(135deg,#eef2ff,#e0f2fe);min-height:100vh}
+.shell{max-width:760px;margin:auto;padding:18px}.top{text-align:center;padding:12px 8px 20px}.badge{display:inline-block;background:#ffffffaa;border:1px solid #fff;padding:7px 12px;border-radius:999px;font-size:13px;font-weight:700}.logo{font-size:68px;line-height:1;margin:12px 0 4px}.top h1{font-size:38px;margin:0}.top p{margin:8px auto;color:var(--muted);max-width:560px}
+.card{background:var(--card);backdrop-filter:blur(12px);border:1px solid #fff;border-radius:28px;padding:25px;box-shadow:0 18px 55px #17255422}.hidden{display:none}
+.stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:22px}.stat{background:#eef2ff;border-radius:16px;padding:11px;text-align:center;font-weight:800}.stat small{display:block;color:var(--muted);font-size:11px;margin-bottom:3px}
+.progress{height:9px;background:#e5e7eb;border-radius:99px;overflow:hidden;margin:5px 0 20px}.bar{height:100%;width:10%;background:linear-gradient(90deg,var(--accent),#38bdf8);transition:.3s}
+.qtag{color:var(--accent);font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.08em}.question{font-size:24px;line-height:1.3;font-weight:800;margin:8px 0 20px}.answers{display:grid;gap:12px}.answers button{border:2px solid #e2e8f0;background:white;color:var(--ink);padding:15px;border-radius:17px;text-align:left;font-size:16px;font-weight:700;cursor:pointer;transition:.15s}.answers button:hover{border-color:#a5b4fc;transform:translateY(-1px)}.answers button.correct{background:#dcfce7;border-color:#22c55e}.answers button.wrong{background:#ffe4e6;border-color:#fb7185}.feedback{min-height:34px;text-align:center;font-weight:800;margin:17px 0 4px}.action{width:100%;border:0;border-radius:17px;padding:15px;font-size:17px;font-weight:900;cursor:pointer;background:var(--ink);color:white;margin-top:10px}.start .action,.restart{background:linear-gradient(90deg,var(--accent),#3b82f6)}.intro{text-align:center}.intro .electron{font-size:82px}.intro h2{font-size:29px;margin:8px}.rules{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:20px 0}.rule{background:#f8fafc;border-radius:16px;padding:12px;font-size:14px}.rule b{display:block;font-size:20px}.result{text-align:center}.score{font-size:60px;font-weight:950;margin:8px}.footer{text-align:center;color:#64748b;font-size:12px;margin-top:14px}
+@media(max-width:520px){.top h1{font-size:31px}.question{font-size:21px}.rules{grid-template-columns:1fr}.card{padding:19px}}
+</style>
+</head>
+<body>
+<div class="shell">
+<header class="top"><span class="badge">PROYECTO DIDÁCTICO DE QUÍMICA</span><div class="logo">⚛️</div><h1>Atrapa el electrón</h1><p>Un reto interactivo sobre enlaces covalentes y estructuras de Lewis.</p></header>
+
+<section id="intro" class="card intro">
+<div class="electron">⚡</div><h2>¿Listo para el reto?</h2>
+<p>Responde 10 preguntas. Cada respuesta correcta suma 1 punto. Tienes 3 vidas.</p>
+<div class="rules"><div class="rule"><b>⭐</b>Puntos<br>1 por acierto</div><div class="rule"><b>❤️</b>Vidas<br>3 oportunidades</div><div class="rule"><b>🏆</b>Meta<br>10 puntos</div></div>
+<button class="action" onclick="start()">COMENZAR JUEGO</button>
+</section>
+
+<section id="game" class="card hidden">
+<div class="stats"><div class="stat"><small>PREGUNTA</small><span id="num">1/10</span></div><div class="stat"><small>PUNTOS</small>⭐ <span id="score">0</span></div><div class="stat"><small>VIDAS</small><span id="lives">❤️❤️❤️</span></div></div>
+<div class="progress"><div id="bar" class="bar"></div></div>
+<div class="qtag">Atrapa el electrón</div><div id="question" class="question"></div><div id="answers" class="answers"></div>
+<div id="feedback" class="feedback"></div><button id="next" class="action hidden" onclick="next()">SIGUIENTE →</button>
+</section>
+
+<section id="end" class="card result hidden"><div class="logo">🏆</div><h2>¡Reto terminado!</h2><div id="scoreFinal" class="score">0/10</div><p id="message"></p><button class="action restart" onclick="start()">JUGAR DE NUEVO</button></section>
+<div class="footer">Contenido elaborado a partir del tema del PDF: enlaces covalentes, Lewis y resonancia.</div>
+</div>
+<script>
+const qs=[
+["¿Qué ocurre en un enlace covalente?",["Los átomos comparten electrones","Los átomos destruyen electrones","Los protones se transfieren","No participan electrones"],0],
+["En un enlace simple, los átomos comparten…",["Un par de electrones","Dos pares","Tres pares","Cuatro pares"],0],
+["En un enlace doble, los átomos comparten…",["Un par","Dos pares de electrones","Tres pares","Ningún par"],1],
+["En un enlace triple, los átomos comparten…",["Un par","Dos pares","Tres pares de electrones","Cuatro pares"],2],
+["¿Cuál es un ejemplo de molécula con enlace doble?",["O₂","H₂","N₂","H₂O"],0],
+["¿Cuál es un ejemplo de molécula con enlace triple?",["H₂","N₂","O₂","CO₂"],1],
+["En una estructura de Lewis poliatómica, el átomo central suele ser…",["El más electronegativo","El menos electronegativo","Siempre el hidrógeno","Siempre el oxígeno"],1],
+["En el enlace covalente se logra una estructura estable mediante…",["La transferencia de electrones","El compartir electrones","La pérdida de protones","La eliminación de neutrones"],1],
+["Los electrones libres o solitarios son…",["Electrones no compartidos","Protones del núcleo","Electrones siempre transferidos","Pares que forman enlaces dobles"],0],
+["En la resonancia del HNO₃, la estructura real es…",["Solo una estructura","Un híbrido de las estructuras de resonancia","Un enlace exclusivamente triple","Una molécula sin electrones"],1]
+];
+let i=0,score=0,lives=3,locked=false;
+const $=id=>document.getElementById(id);
+function start(){i=0;score=0;lives=3;$("intro").classList.add("hidden");$("end").classList.add("hidden");$("game").classList.remove("hidden");render()}
+function render(){locked=false;$("num").textContent=`${i+1}/10`;$("score").textContent=score;$("lives").textContent="❤️".repeat(lives)+"🖤".repeat(3-lives);$("bar").style.width=((i+1)/10*100)+"%";$("question").textContent=qs[i][0];$("feedback").textContent="";$("next").classList.add("hidden");let box=$("answers");box.innerHTML="";qs[i][1].forEach((a,n)=>{let b=document.createElement("button");b.textContent=a;b.onclick=()=>answer(n,b);box.appendChild(b)})}
+function answer(n,b){if(locked)return;locked=true;let btns=[...$("answers").children];btns.forEach(x=>x.disabled=true);let ok=n===qs[i][2];if(ok){score++;b.classList.add("correct");$("feedback").textContent="✅ ¡Correcto! Has atrapado el electrón."}else{lives--;b.classList.add("wrong");btns[qs[i][2]].classList.add("correct");$("feedback").textContent="❌ No esta vez. La respuesta correcta está marcada en verde."}$("score").textContent=score;$("lives").textContent="❤️".repeat(lives)+"🖤".repeat(3-lives);$("next").textContent=(i===9||lives===0)?"VER RESULTADO":"SIGUIENTE →";$("next").classList.remove("hidden")}
+function next(){if(i===9||lives===0){finish()}else{i++;render()}}
+function finish(){$("game").classList.add("hidden");$("end").classList.remove("hidden");$("scoreFinal").textContent=score+"/10";$("message").textContent=score>=9?"🌟 ¡Excelente dominio del tema!":score>=7?"👏 ¡Muy buen trabajo!":score>=5?"👍 Buen intento. Repasa un poco y vuelve a jugar.":"📚 Sigue practicando los conceptos de enlaces covalentes y Lewis."}
+</script>
+</body></html>
